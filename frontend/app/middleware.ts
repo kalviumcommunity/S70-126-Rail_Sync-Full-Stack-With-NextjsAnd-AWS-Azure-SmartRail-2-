@@ -12,33 +12,38 @@ export async function middleware(req: NextRequest) {
     
     // 2. Extract Token
     const authHeader = req.headers.get("authorization");
-    const token = authHeader?.split(" ")[1];
-
-    if (!token) {
+    
+    // Robust check: Ensure it starts with "Bearer "
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.log(`[Middleware] 🔴 Blocked: Missing or malformed header for ${pathname}`);
       return NextResponse.json(
-        { success: false, message: "Token missing" }, 
+        { success: false, message: "Token missing or malformed" }, 
         { status: 401 }
       );
     }
 
+    const token = authHeader.split(" ")[1];
+
     try {
-      // 3. Verify Token (Edge compatible)
+      // 3. Verify Token
       const secret = new TextEncoder().encode(JWT_SECRET);
       const { payload } = await jwtVerify(token, secret);
       
-      // payload.role is accessed from the decoded JWT
       const userRole = payload.role as string;
       const userEmail = payload.email as string;
 
-      // 4. RBAC: Enforce Admin Only for /api/admin
+      // 4. RBAC: Enforce Admin Only
       if (pathname.startsWith("/api/admin") && userRole !== "admin") {
+        console.log(`[Middleware] ⛔ Access Denied: User ${userEmail} (Role: ${userRole}) tried to access Admin route`);
         return NextResponse.json(
           { success: false, message: "Access denied: Admins only" }, 
           { status: 403 }
         );
       }
 
-      // 5. Attach user info to headers for downstream use
+      // 5. Success! Attach info and pass through
+      console.log(`[Middleware] 🟢 Access Granted: ${userEmail} (${userRole}) -> ${pathname}`);
+      
       const requestHeaders = new Headers(req.headers);
       requestHeaders.set("x-user-email", userEmail);
       requestHeaders.set("x-user-role", userRole);
@@ -50,6 +55,7 @@ export async function middleware(req: NextRequest) {
       });
 
     } catch (error) {
+      console.log(`[Middleware] 🔴 Blocked: Invalid Token for ${pathname}`);
       return NextResponse.json(
         { success: false, message: "Invalid or expired token" }, 
         { status: 403 }
@@ -61,7 +67,6 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// Optimization: Matcher config to run middleware only on API routes
 export const config = {
   matcher: '/api/:path*',
 };
