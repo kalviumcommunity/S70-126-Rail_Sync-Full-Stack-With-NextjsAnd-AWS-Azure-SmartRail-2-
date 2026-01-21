@@ -1,0 +1,61 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// MERGED USER MODEL (Use this one only)
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String    
+  role      String    @default("user") // <--- Role added here
+  createdAt DateTime  @default(now()) 
+  
+  bookings  Booking[] // <--- Relation to Booking kept here
+}
+
+model Train {
+  id            Int       @id @default(autoincrement())
+  trainNumber   String    @unique
+  name          String
+  currentStatus String
+   
+  availableSeats Int      @default(100) 
+   
+  schedule      Schedule[]
+  bookings      Booking[]
+}
+
+model Booking {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  trainId   Int
+  createdAt DateTime @default(now())
+   
+  user      User     @relation(fields: [userId], references: [id])
+  train     Train    @relation(fields: [trainId], references: [id])
+}
+
+model Station {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique
+  name      String
+  schedules Schedule[]
+}
+
+model Schedule {
+  id            Int      @id @default(autoincrement())
+  trainId       Int
+  stationId     Int
+  arrivalTime   DateTime
+  departureTime DateTime
+  sequenceOrder Int
+   
+  train         Train    @relation(fields: [trainId], references: [id])
+  station       Station  @relation(fields: [stationId], references: [id])
+}
