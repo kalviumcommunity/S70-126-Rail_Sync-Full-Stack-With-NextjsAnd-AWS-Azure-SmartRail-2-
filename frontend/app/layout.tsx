@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import { cookies } from "next/headers"; 
 import "./globals.css";
+import { AuthProvider } from "@/components";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +16,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  
+  title: "RailSync",
+  description: "Real-time train tracking and intelligent routing",
+  
   title: "Rail Sync App",
   description: "Real-Time Train Intelligence",
+
 };
 
 // Helper to decode JWT payload without external libraries
@@ -57,6 +63,11 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
       >
+
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+
         <nav className="flex items-center justify-between p-4 bg-white shadow-sm border-b sticky top-0 z-50">
           <div className="flex gap-6 items-center">
             <Link href="/" className="text-xl font-bold text-blue-600 hover:opacity-80 transition flex items-center gap-2">
@@ -98,6 +109,7 @@ export default async function RootLayout({
         <main className="min-h-screen">
           {children}
         </main>
+
       </body>
     </html>
   );

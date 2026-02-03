@@ -28,6 +28,27 @@ Security: JWT Authentication, Bcrypt.js.
 
 Deployment: Vercel (Frontend), Render (Backend).
 
+## Component Architecture
+The application follows a modular component architecture to ensure scalability and consistency.
+
+### Hierarchy
+`LayoutWrapper` (Global State/Layout)
+ ├── `Header` (Navigation, Search, User Profile)
+ ├── `Sidebar` (Project Navigation)
+ └── `Page Content` (Dynamic children)
+
+### Key Components
+- **LayoutWrapper**: Orchestrates the flexible layout structure, handling the sidebar/header positioning.
+- **Header**: Sticky top navigation with search and user actions.
+- **Sidebar**: Responsive side navigation with active state management.
+- **UI/Button**: Reusable button component with multiple variants (primary, secondary, outline, etc.).
+
+### Usage
+Components are exported via `components/index.ts` for clean imports:
+```tsx
+import { LayoutWrapper, Button } from "@/components";
+```
+
 🏗 High-Level Architecture
 The application uses a modern MERN stack where the backend serves a Mock Data Engine to simulate live train movements across the Indian Railways network.
 
