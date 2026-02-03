@@ -8,7 +8,7 @@ const PORT = 8000;
 
 // ALLOW REQUESTS FROM NEXT.JS
 app.use(cors({
-  origin: 'http://localhost:3000' 
+  origin: 'http://localhost:3000'
 }));
 
 app.use(express.json());
