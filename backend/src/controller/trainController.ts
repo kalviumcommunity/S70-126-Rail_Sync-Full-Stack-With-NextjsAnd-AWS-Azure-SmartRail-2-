@@ -1,17 +1,16 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+// ✅ Use the shared Prisma instance (prevents connection crashes)
+import { prisma } from "../lib/prisma";
 
-const prisma = new PrismaClient();
-
-// 1. Get All Trains (You already had this)
+// 1. Get All Trains
 export const getTrains = async (req: Request, res: Response) => {
   try {
     console.log("Fetching trains from database...");
     
-    // SIMPLE FETCH: Just get the trains, no complex relations yet
     const trains = await prisma.train.findMany({
       orderBy: {
-        updatedAt: 'desc'
+        updatedAt: 'desc' 
+      }, // 👈 ✅ FIXED: Added closing brace and comma here
       include: {
         schedule: {
           include: {
@@ -29,7 +28,7 @@ export const getTrains = async (req: Request, res: Response) => {
   }
 };
 
-// 2. Book a Seat (THIS WAS MISSING)
+// 2. Book a Seat
 export const bookSeat = async (req: Request, res: Response) => {
   const { trainId, userId } = req.body;
 

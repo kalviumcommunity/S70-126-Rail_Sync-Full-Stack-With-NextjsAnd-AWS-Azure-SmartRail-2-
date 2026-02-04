@@ -1,18 +1,22 @@
-
 "use client";
 
 import Link from "next/link";
-import { Button, useAuth } from "@/components";
-import { TrainFront, Map, Clock, ShieldCheck, ArrowRight } from "lucide-react";
+import { useAuth } from "@/components"; // Assuming you have this exported from components
+import { TrainFront, Map, Clock, ShieldCheck, ArrowRight, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 export default function Home() {
   const { isAuthenticated } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white font-sans">
-      {/* Navbar */}
+    <div className="flex flex-col min-h-screen font-sans text-gray-900 bg-white">
+      
+      {/* ==================== 1. NAVBAR ==================== */}
       <nav className="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          
+          {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white">
               <TrainFront className="w-5 h-5" />
@@ -22,40 +26,72 @@ export default function Home() {
             </span>
           </div>
 
-          <div className="flex items-center gap-4">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
             {isAuthenticated ? (
               <Link href="/dashboard">
-                <Button rightIcon={<ArrowRight className="w-4 h-4" />}>
+                <button className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all shadow-lg shadow-blue-500/20">
                   Go to Dashboard
-                </Button>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </Link>
             ) : (
               <>
-                <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors">
                   Sign In
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm">Get Started</Button>
+                  <button className="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-lg transition-all">
+                    Get Started
+                  </button>
                 </Link>
               </>
             )}
+          </div>
 
-import Link from "next/link";
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-gray-600">
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
 
-export default function Home() {
-  return (
-    <div className="flex flex-col min-h-screen font-sans text-gray-900">
-      
-      {/* 1. HERO SECTION */}
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-white border-b border-gray-100 p-4 space-y-4">
+            {isAuthenticated ? (
+              <Link href="/dashboard" className="block w-full">
+                <button className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-blue-600 text-white font-medium rounded-lg">
+                  Dashboard <ArrowRight className="w-4 h-4" />
+                </button>
+              </Link>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <Link href="/login" className="block text-center text-gray-600 font-medium py-2">
+                  Sign In
+                </Link>
+                <Link href="/signup">
+                  <button className="w-full px-5 py-3 bg-gray-900 text-white font-medium rounded-lg">
+                    Get Started
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
+        )}
+      </nav>
+
+      {/* ==================== 2. HERO SECTION ==================== */}
       <section className="relative bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900 text-white pt-24 pb-32 overflow-hidden">
         {/* Abstract Background Decoration */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10 pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
           <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-blue-400 blur-3xl"></div>
           <div className="absolute top-1/2 right-0 w-64 h-64 rounded-full bg-indigo-400 blur-3xl"></div>
         </div>
 
         <div className="container mx-auto px-6 relative z-10 text-center">
-          <div className="inline-block mb-4 px-4 py-1.5 rounded-full bg-blue-800 bg-opacity-50 border border-blue-400 text-blue-200 text-sm font-medium">
+          <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-blue-800/50 border border-blue-400/30 text-blue-200 text-sm font-medium backdrop-blur-sm">
             🚀 Now Live: Real-Time Delay Prediction
           </div>
           
@@ -67,131 +103,41 @@ export default function Home() {
           </h1>
           
           <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Millions of trains run late every day. <strong>Rail Sync</strong> gives you real-time intelligence, smart routing alternatives, and live status updates to keep you moving.
+            Millions of trains run late every day. <strong>RailSync</strong> gives you real-time intelligence, smart routing alternatives, and live status updates to keep you moving.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="/dashboard" 
-              className="px-8 py-4 bg-white text-blue-900 font-bold rounded-xl hover:bg-blue-50 transition transform hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2"
-            >
-              Check Live Status
-              {/* Arrow Icon */}
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-            </Link>
-            <Link 
-              href="/login" 
-              className="px-8 py-4 bg-transparent border border-blue-300 text-white font-semibold rounded-xl hover:bg-white/10 transition flex items-center justify-center"
-            >
-              Log In
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. PROBLEM & SOLUTION STRIP */}
-      <section className="py-12 bg-white border-b">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-red-100 text-red-600 rounded-full">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 font-semibold uppercase tracking-wider">The Problem</p>
-              <p className="font-medium text-gray-900">Unpredictable delays & missed connections.</p>
-            </div>
-          </div>
-          <div className="hidden md:block w-px h-12 bg-gray-200"></div>
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-green-100 text-green-600 rounded-full">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 font-semibold uppercase tracking-wider">The Solution</p>
-              <p className="font-medium text-gray-900">Accurate predictions & instant alternatives.</p>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-      {/* Hero Section */}
-      <section className="relative pt-20 pb-24 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-8 animate-fade-in-up">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-            </span>
-            Live Train Tracking Now Available
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-8 leading-tight">
-            Smarter Commutes, <br className="hidden md:block" />
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
-              Seamless Journeys
-            </span>
-          </h1>
-
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Experience real-time tracking, intelligent routing, and precise scheduling.
-            RailSync brings the power of modern logistics to your daily commute.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {isAuthenticated ? (
-              <Link href="/dashboard">
-                <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-lg shadow-xl shadow-blue-500/20" rightIcon={<ArrowRight className="w-5 h-5" />}>
-                  Launch Dashboard
-                </Button>
+               <Link 
+                href="/dashboard" 
+                className="px-8 py-4 bg-white text-blue-900 font-bold rounded-xl hover:bg-blue-50 transition transform hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2"
+              >
+                Launch Dashboard
+                <ArrowRight className="w-5 h-5" />
               </Link>
             ) : (
-              <Link href="/signup">
-                <Button size="lg" className="w-full sm:w-auto h-12 px-8 text-lg shadow-xl shadow-blue-500/20" rightIcon={<ArrowRight className="w-5 h-5" />}>
-                  Start Your Journey
-                </Button>
+              <Link 
+                href="/signup" 
+                className="px-8 py-4 bg-white text-blue-900 font-bold rounded-xl hover:bg-blue-50 transition transform hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2"
+              >
+                Start Your Journey
+                <ArrowRight className="w-5 h-5" />
               </Link>
             )}
-            <Button variant="outline" size="lg" className="w-full sm:w-auto h-12 px-8 text-lg">
-              Learn More
-            </Button>
-          </div>
-        </div>
-
-        {/* Background Gradients */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl -z-10 pointer-events-none">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 mix-blend-multiply"></div>
-          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-100/40 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3 mix-blend-multiply"></div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section className="py-20 bg-gray-50/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<Map className="w-6 h-6 text-blue-600" />}
-              title="Live Tracking"
-              description="Visualize train positions in real-time on our interactive map interface."
-            />
-            <FeatureCard
-              icon={<Clock className="w-6 h-6 text-indigo-600" />}
-              title="Smart Schedules"
-              description="Get accurate arrival predictions powered by advanced algorithms."
-            />
-            <FeatureCard
-              icon={<ShieldCheck className="w-6 h-6 text-teal-600" />}
-              title="Secure & Reliable"
-              description="Enterprise-grade security ensures your travel data is always protected."
-            />
+            
+            <Link 
+              href="/about" 
+              className="px-8 py-4 bg-transparent border border-blue-300 text-white font-semibold rounded-xl hover:bg-white/10 transition flex items-center justify-center"
+            >
+              How it Works
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* 3. KEY FEATURES GRID */}
+      {/* ==================== 3. FEATURES GRID ==================== */}
       <section className="py-24 bg-gray-50">
-        <div className="container mx-auto px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Everything you need to stay on track
@@ -202,49 +148,34 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Real-Time Live Feed</h3>
-              <p className="text-gray-600 leading-relaxed">
-                View live train arrival and delay information. Our data engine simulates the network with high accuracy.
-              </p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7" /></svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Intelligent Routing</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Stuck at a station? We instantly suggest alternative routes to get you to your destination faster.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-6">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Secure Accounts</h3>
-              <p className="text-gray-600 leading-relaxed">
-                Your commute history is safe with us. We use JWT Authentication and Bcrypt encryption for maximum security.
-              </p>
-            </div>
+            <FeatureCard
+              icon={<Map className="w-6 h-6 text-blue-600" />}
+              title="Live Tracking"
+              description="Visualize train positions in real-time on our interactive map interface with high precision updates."
+            />
+            <FeatureCard
+              icon={<Clock className="w-6 h-6 text-indigo-600" />}
+              title="Smart Schedules"
+              description="Get accurate arrival predictions powered by advanced algorithms that learn from historical delays."
+            />
+            <FeatureCard
+              icon={<ShieldCheck className="w-6 h-6 text-teal-600" />}
+              title="Secure & Reliable"
+              description="Enterprise-grade security ensures your travel data and personal information is always protected."
+            />
           </div>
         </div>
       </section>
 
-      {/* 4. FOOTER */}
+      {/* ==================== 4. FOOTER ==================== */}
       <footer className="bg-gray-900 text-gray-400 py-12 border-t border-gray-800">
         <div className="container mx-auto px-6 text-center md:text-left">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <span className="text-2xl font-bold text-white">Rail Sync 🚆</span>
-              <p className="mt-2 text-sm">Real-Time Train Intelligence for India.</p>
+              <span className="text-2xl font-bold text-white flex items-center gap-2">
+                <TrainFront className="w-6 h-6" /> RailSync
+              </span>
+              <p className="mt-2 text-sm">Real-Time Train Intelligence for the Modern Commuter.</p>
             </div>
             <div className="flex gap-6 text-sm">
               <Link href="#" className="hover:text-white transition">Privacy Policy</Link>
@@ -253,7 +184,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-gray-800 text-center text-xs">
-            &copy; {new Date().getFullYear()} Rail Sync App. Built with Next.js, Tailwind, & MongoDB.
+            &copy; {new Date().getFullYear()} RailSync. Built with Next.js & PostgreSQL.
           </div>
         </div>
       </footer>
@@ -262,10 +193,11 @@ export default function Home() {
   );
 }
 
+// Helper Component for Features
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
   return (
-    <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-      <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center mb-6">
+    <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+      <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-6">
         {icon}
       </div>
       <h3 className="text-xl font-bold text-gray-900 mb-3">{title}</h3>
